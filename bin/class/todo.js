@@ -26,9 +26,4 @@ var Todo = /** @class */ (function () {
     return Todo;
 }());
 
-function createTodo(id, task, completed, due) {
-    var todo = new Todo(id, task, completed, due);
-    return todo;
-};
-
-exports["createTodo"] = createTodo;
+module.exports = Todo;

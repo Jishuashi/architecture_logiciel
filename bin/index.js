@@ -1,21 +1,28 @@
 #! /usr/bin/env node
 const yargs = require("yargs");
-const utils = require('./utils.js')
-const todo = require('./class/todo');
+const models = require("./models");
+const { usage } = require("yargs");
 
-const usage = "\nUsage: todo <command> <options>";
+const usageSTR = "\nUsage: todo <command> <options>";
 
-options = yargs.usage(usage)
-    .command("create", "Ajoute une todo")
-    .command("list", "Liste les todos")
-    .command("complete", "Marque une todo comme terminée")
-    .command("delete", "Supprime une todo")  
-    .option("t", { alias: "task", describe: "Récupere la tâche", type: "string", demandOption: true })
-    .option("id", { alias: "id", describe: "", type: "string", demandOption: true })
-    .option("c", { alias: "complete", describe: "Crée une todo", type: "string", demandOption: true })
-    .option("d", { alias: "due", describe: "Crée une todo", type: "string", demandOption: true })
+use = yargs.usage(usageSTR);
+
+const commands = yargs.command("create", "Ajoute une todo", (y) => {
+    y.option('t', { alias: "task", describe: "Tache à rappeler", type: "string", demandOption: true });
+    y.option('d', { alias: "due", describe: "Echeance de la tache", type: "string", demandOption: false });
+    return y;
+}, (argv) => { models.createTodo(argv.task, argv.due) })
+    .command("complete", "Marque une todo comme terminée", (y) => {
+        y.option('i', { alias: "id", describe: "id de la Tache", type: "string", demandOption: true });
+        return y;
+    }, (argv) => { models.complete(argv.id) })
+    .command("delete", "Supprime une todo", (y) => {
+        y.option('i', { alias: "id", describe: "id de la Tache", type: "string", demandOption: true });
+        return y;
+    }, (argv) => { models.deleteTodo(argv.id) })
+    .command("list", "List les todo", (y) => { }, (argv) => { models.list() })
     .help(true)
     .argv;
 
-    
+
 
