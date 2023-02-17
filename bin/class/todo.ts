@@ -1,7 +1,7 @@
 class Todo{
     private id:number;
     private task:string;
-    private completed:boolean;
+    private complete:boolean;
     private due?:Date;
     
 
@@ -9,13 +9,13 @@ class Todo{
      * Crée un todo
      * @param id Id du todo
      * @param task Tache à réaliser
-     * @param completed Si la tâche est terminée
+     * @param complete Si la tâche est terminée
      * @param due Date de fin de la tâche
      */
-    constructor(id:number, task:string, completed:boolean, due?:Date){
+    constructor(id:number, task:string, complete:boolean, due?:Date){
         this.id = id;
         this.task = task;
-        this.completed = completed;
+        this.complete = complete;
         this.due = due;
     };
 
@@ -26,11 +26,29 @@ class Todo{
     getID():number{
         return this.id;
     };
-};
 
-function createTodo(id:number, task:string, completed:boolean, due?:Date):Todo{
-    const todo = new Todo(id, task, completed, due);
-    return todo;
-};
 
-export default createTodo;
+    /**
+     * 
+     * @returns Tache à réaliser
+     */
+    getTask():string{
+        return this.task;
+    };
+
+    /**
+     * 
+     * @returns Si la tâche est terminée
+     */
+    getcomplete():boolean{
+        return this.complete;
+    };
+
+    /**
+     * 
+     * @returns Date de fin de la tâche
+     */
+    getDue():Date | undefined{
+        return this.due;
+    }
+};

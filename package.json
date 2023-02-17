@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "bin": {
-    "todo": "./bin/index.js"
+    "todo": "./bin/views.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,9 @@
   },
   "homepage": "https://github.com/Jishuashi/Architechure_logiciel#readme",
   "dependencies": {
+    "knex": "^2.4.2",
+    "mysql": "^2.18.1",
+    "sqlite3": "^5.1.4",
     "utils": "^0.3.1",
     "yargs": "^17.6.2"
   }
