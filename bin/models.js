@@ -1,7 +1,16 @@
+/**
+ * @file models.js
+ * @description Contient les fonctions de gestion du model
+ * @author Jishuashi
+ * @version 1.0.0
+ */
+
 const { boolean, option } = require("yargs");
 const Todo = require("./class/todo");
 const fs = require("fs");
 
+
+// Creé la connection à la base de donnée
 const knex = require('knex')({
     client: 'sqlite3', // or 'better-sqlite3'
     connection: {
@@ -10,6 +19,13 @@ const knex = require('knex')({
     useNullAsDefault: true
 });
 
+
+/**
+ * Creé un todo et l'ajoute à la base de donnée
+ * @param {*} pTask     Tache à réaliser
+ * @param {*} pComplete  Si la tâche est terminée
+ * @param {*} pDue    Date de fin de la tâche
+ */
 const createTodo = (pTask, pComplete, pDue) => {
 
     if (pDue === undefined) {
@@ -34,6 +50,13 @@ const createTodo = (pTask, pComplete, pDue) => {
     });
 };
 
+/**
+ * Update un todo dans la base de donnée
+ * @param {*} pId    Id du todo
+ * @param {*} pComplete    Si la tâche est terminée (true/false) ou undefined
+ * @param {*} pDue  Date de fin de la tâche ou undefined
+ * @param {*} pTask     
+ */
 function update(pId, pComplete, pDue, pTask) {
     knex('todo').where('id', pId).update({ complete:(pComplete != undefined) ? pComplete ? 0 : 1 : knex('todo').where('id', pId).select('complete') , date: (pDue != undefined) ? pDue : knex('todo').where('id', pId).select('date'), task: (pTask != undefined) ? pTask : knex('todo').where('id', pId).select('task')  }).then((rows) => {
         console.log('Todo updated');
@@ -44,6 +67,11 @@ function update(pId, pComplete, pDue, pTask) {
     });
 };   
 
+
+/**
+ * Supprime un todo de la base de donnée
+ * @param {*} pId   Id du todo
+ */
 const deleteTodo = (pId) => {
     knex('todo').where('id', pId).del().then((rows) => {
         console.log('Todo deleted');
@@ -54,6 +82,10 @@ const deleteTodo = (pId) => {
     });
 };
 
+/**
+ * Affiche la liste des todos dans le terminal contenu dans la base de donnée
+ * @returns Liste des todos
+ */
 const list = () => {
     knex.select('*').from('todo').then((rows) => {
         for(let i = 0; i < rows.length; i++){
@@ -77,6 +109,9 @@ const list = () => {
     });
 };
 
+/**
+ * Initialise la base de donnée
+ */
 const initDatabase = () => {
     knex.schema.createTable('todo', function(table) {
         table.increments('id').primary();
@@ -95,6 +130,9 @@ const initDatabase = () => {
       });
 };
 
+/**
+ * Supprime la base de donnée
+ */
 const deleteDatabase = () => {
     knex.schema.dropTable('todo').then(() => {
         console.log('Table deleted');
@@ -105,6 +143,8 @@ const deleteDatabase = () => {
     });
 };
 
+
+// Export des fonctions
 exports.createTodo = createTodo;
 exports.update = update;
 exports.deleteTodo = deleteTodo;
