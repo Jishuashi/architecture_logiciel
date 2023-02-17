@@ -15,11 +15,11 @@ const commands = yargs.command("create", "Ajoute une todo", (y) => {
 }, (argv) => { models.createTodo(argv.task, argv.complete, argv.due) })
     .command("update", "Change les paramètre de todo", (y) => {
         y.option('i', { alias: "id", describe: "id de la Tache", type: "string", demandOption: true });
-        y.option('t', { alias: "id", describe: "id de la Tache", type: "string", demandOption: false });
+        y.option('t', { alias: "task", describe: "Tache à rappeler", type: "string", demandOption: false });
         y.option('c', { alias: "complete", describe: "Si la tâche est terminer", type: "string", demandOption: false });
         y.option('d', { alias: "due", describe: "Echeance de la tache", type: "string", demandOption: false });
         return y;
-    }, (argv) => { models.update(argv.id) })
+    }, (argv) => { models.update(argv.id, argv.complete, argv.due, argv.task) })
     .command("delete", "Supprime une todo", (y) => {
         y.option('i', { alias: "id", describe: "id de la Tache", type: "string", demandOption: true });
         return y;

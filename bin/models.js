@@ -34,12 +34,24 @@ const createTodo = (pTask, pComplete, pDue) => {
     });
 };
 
-function update(pId) {
-    console.log("complete --> " + pId);
-}
+function update(pId, pComplete, pDue, pTask) {
+    knex('todo').where('id', pId).update({ complete:(pComplete != undefined) ? pComplete ? 0 : 1 : knex('todo').where('id', pId).select('complete') , date: (pDue != undefined) ? pDue : knex('todo').where('id', pId).select('date'), task: (pTask != undefined) ? pTask : knex('todo').where('id', pId).select('task')  }).then((rows) => {
+        console.log('Todo updated');
+    }).catch((err) => {
+        console.log(err);
+    }).finally(() => {
+        knex.destroy();
+    });
+};   
 
 const deleteTodo = (pId) => {
-    console.log("delete --> " + pId);
+    knex('todo').where('id', pId).del().then((rows) => {
+        console.log('Todo deleted');
+    }).catch((err) => {
+        console.log(err);
+    }).finally(() => {
+        knex.destroy();
+    });
 };
 
 const list = () => {
@@ -73,10 +85,10 @@ const initDatabase = () => {
         table.date('date').nullable();
       })
       .then(function() {
-        console.log('Table created successfully');
+        console.log('Table created');
       })
-      .catch(function(error) {
-        console.log(error);
+      .catch(function(err) {
+        console.log(err);
       })
       .finally(function() {
         knex.destroy();
