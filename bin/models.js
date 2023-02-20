@@ -10,7 +10,6 @@ const knex = require('knex')({
     useNullAsDefault: true
 });
 
-<<<<<<< HEAD
 
 /**
  * Creé un todo et l'ajoute à la base de donnée
@@ -18,8 +17,6 @@ const knex = require('knex')({
  * @param {boolean} pComplete  Si la tâche est terminée
  * @param {date} pDue    Date de fin de la tâche
  */
-=======
->>>>>>> parent of c6cbcca (Comment of all code)
 const createTodo = (pTask, pComplete, pDue) => {
 
     if (pDue === undefined) {
@@ -44,7 +41,6 @@ const createTodo = (pTask, pComplete, pDue) => {
     });
 };
 
-<<<<<<< HEAD
 /**
  * Update un todo dans la base de donnée
  * @param {number} pId    Id du todo
@@ -52,8 +48,6 @@ const createTodo = (pTask, pComplete, pDue) => {
  * @param {date} pDue  Date de fin de la tâche ou undefined
  * @param {string} pTask     
  */
-=======
->>>>>>> parent of c6cbcca (Comment of all code)
 function update(pId, pComplete, pDue, pTask) {
     knex('todo').where('id', pId).update({ complete:(pComplete != undefined) ? pComplete ? 0 : 1 : knex('todo').where('id', pId).select('complete') , date: (pDue != undefined) ? pDue : knex('todo').where('id', pId).select('date'), task: (pTask != undefined) ? pTask : knex('todo').where('id', pId).select('task')  }).then((rows) => {
         console.log('Todo updated');
@@ -64,14 +58,11 @@ function update(pId, pComplete, pDue, pTask) {
     });
 };   
 
-<<<<<<< HEAD
 
 /**
  * Supprime un todo de la base de donnée
  * @param {number} pId   Id du todo
  */
-=======
->>>>>>> parent of c6cbcca (Comment of all code)
 const deleteTodo = (pId) => {
     knex('todo').where('id', pId).del().then((rows) => {
         console.log('Todo deleted');

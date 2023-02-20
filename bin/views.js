@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-/* A shebang. It is a special comment that tells the shell what program to use to run the file. */
-/* #! /usr/bin/env node */
+#! /usr/bin/env node
 
 /**
  * @file views.js
@@ -8,10 +6,6 @@
  * @author Jishuashi
  * @version 1.0.0
  */
-
-=======
-#! /usr/bin/env node
->>>>>>> parent of c6cbcca (Comment of all code)
 const yargs = require("yargs");
 const models = require("./models");
 const { usage } = require("yargs");
