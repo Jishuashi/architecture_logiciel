@@ -1,5 +1,4 @@
 #! /usr/bin/env node
-
 /**
  * @file views.js
  * @description Contient les fonctions de gestion des vues
@@ -9,6 +8,17 @@
 const yargs = require("yargs");
 const models = require("./models");
 const { usage } = require("yargs");
+const express = require('express');
+const ejs = require('ejs');
+const app = express();
+const port = 3000;
+
+app.set("view engine", "ejs");
+
+app.get('/', (req, res) => {
+    res.render("index");
+})
+
 
 const usageSTR = "\nUsage: todo <command> <options>";
 
@@ -34,8 +44,19 @@ const commands = yargs.command("create", "Ajoute une todo", (y) => {
     .command("list", "List les todo", (y) => { }, (argv) => { models.list() })
     .command("initDB", "Init la table de la base de donnée", (y) => { }, (argv) => { models.initDatabase() })
     .command("deleteDB", "Delete la table de la base de donnée", (y) => { }, (argv) => { models.deleteDatabase() })
+    .command("serv", "Lance le serveur", (y) => { }, (argv) => {
+        app.listen(port, () => {console.log(`Todo app listening on port ${port}`)
+        //webView();
+    })})
     .help(true)
+    .require(1, "Vous devez spécifier une commande")
     .argv;
 
+    //express views
+    function webView(){
+        app.get('/list', (req, res) => {
 
-
+        console.log(typeof models.getAllTodo()); 
+            res.render("list", {tasks: models.getAllTodo()});
+        })
+    };

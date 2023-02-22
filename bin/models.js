@@ -124,6 +124,21 @@ const deleteDatabase = () => {
     });
 };
 
+const getAllTodo = () => {
+let lResult = [];
+
+    knex.select('*').from('todo').then((rows) => {
+        lResult = rows;
+    }).catch((err) => {
+        console.log(err);
+    }).finally(() => {
+        knex.destroy();
+    });
+
+    return lResult;
+};
+
+exports.getAllTodo = getAllTodo;
 exports.createTodo = createTodo;
 exports.update = update;
 exports.deleteTodo = deleteTodo;
