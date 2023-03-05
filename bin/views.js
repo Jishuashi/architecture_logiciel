@@ -19,6 +19,7 @@ app.get('/', (req, res) => {
     res.render("index");
 })
 
+app.use(express.static('public'));
 
 const usageSTR = "\nUsage: todo <command> <options>";
 
@@ -46,7 +47,7 @@ const commands = yargs.command("create", "Ajoute une todo", (y) => {
     .command("deleteDB", "Delete la table de la base de donnée", (y) => { }, (argv) => { models.deleteDatabase() })
     .command("serv", "Lance le serveur", (y) => { }, (argv) => {
         app.listen(port, () => {console.log(`Todo app listening on port ${port}`)
-        //webView();
+        webView();
     })})
     .help(true)
     .require(1, "Vous devez spécifier une commande")
@@ -54,9 +55,11 @@ const commands = yargs.command("create", "Ajoute une todo", (y) => {
 
     //express views
     function webView(){
-        app.get('/list', (req, res) => {
+        app.get('/list', (req, res) => {   
+        models.getAllTodo().then(rows => {
+            res.render('list', {tasks: rows});
+        });
+    
 
-        console.log(typeof models.getAllTodo()); 
-            res.render("list", {tasks: models.getAllTodo()});
-        })
+    });
     };

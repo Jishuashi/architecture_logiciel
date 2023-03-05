@@ -124,19 +124,11 @@ const deleteDatabase = () => {
     });
 };
 
-const getAllTodo = () => {
-let lResult = [];
-
-    knex.select('*').from('todo').then((rows) => {
-        lResult = rows;
-    }).catch((err) => {
-        console.log(err);
-    }).finally(() => {
-        knex.destroy();
-    });
-
-    return lResult;
+const getAllTodo = async () => {
+    const rows = await knex.select('*').from('todo');
+    return rows;
 };
+
 
 exports.getAllTodo = getAllTodo;
 exports.createTodo = createTodo;

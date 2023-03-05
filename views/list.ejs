@@ -5,23 +5,41 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TODO App</title>
+    <link href="./public/css/list.css" rel="stylesheet" type="text/css">
 </head>
 <body>
     <header>
-        <nav>
-            <ul>
-                <li><a href="/">Accueil</a></li>
-                <li><a href="/list">Liste des tâches</a></li>
-            </ul>
-        </nav>
+        <div className="divNav">
+            <nav className="navbar">
+                <a href="/"><img src={logo} className="logo" alt="logo"/></a>
+                <div className="rightNav">
+                    <a className="link" href="/connexion">S'identifier</a>
+                    <a className="link" href="/inscription">S'inscrire</a>
+                </div>
+            </nav>
+        </div>
     </header>
     <main>
-        <h1>Liste des tâches</h1>
-        <ul>
-            <% for (let i = 0; i < tasks.length; i++) { %>
-                <li><%= tasks[i] %></li>
-            <% } %>
-        </ul>
-    </main>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Tâche</th>
+              <th>Complété</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% tasks.forEach(function(task) { %>
+              <tr>
+                <td><%= task.id %></td>
+                <td><%= task.task %></td>
+                <td><%= task.complete ? 'Oui' : 'Non' %></td>
+                <td><%= task.date %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </main>
 </body>
 </html>
