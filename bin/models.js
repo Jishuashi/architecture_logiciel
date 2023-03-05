@@ -18,6 +18,14 @@ const knex = require('knex')({
  * @param {date} pDue    Date de fin de la tâche
  */
 const createTodo = (pTask, pComplete, pDue) => {
+    const knexCreate = require('knex')({
+        client: 'sqlite3', // or 'better-sqlite3'
+        connection: {
+            filename: "./database/todo.db"
+        },
+        useNullAsDefault: true
+    });
+
 
     if (pDue === undefined) {
         var todo = new Todo(0, pTask, pComplete);
@@ -32,12 +40,12 @@ const createTodo = (pTask, pComplete, pDue) => {
     };
 
 
-    knex('todo').insert({ task: todo.getTask(), complete: todo.getComplete() ? 1 : 0, date: todo.getDue() }).then((rows) => {
+    knexCreate('todo').insert({ task: todo.getTask(), complete: todo.getComplete() ? 1 : 0, date: todo.getDue() + "" }).then((rows) => {
         console.log('Todo created');
     }).catch((err) => {
-        console.log(err);
+        console.log("Error CREATE: " + err);
     }).finally(() => {
-        knex.destroy();
+        knexCreate.destroy();
     });
 };
 
@@ -49,12 +57,20 @@ const createTodo = (pTask, pComplete, pDue) => {
  * @param {string} pTask     
  */
 function update(pId, pComplete, pDue, pTask) {
-    knex('todo').where('id', pId).update({ complete:(pComplete != undefined) ? pComplete ? 0 : 1 : knex('todo').where('id', pId).select('complete') , date: (pDue != undefined) ? pDue : knex('todo').where('id', pId).select('date'), task: (pTask != undefined) ? pTask : knex('todo').where('id', pId).select('task')  }).then((rows) => {
+    const knexUpdate = require('knex')({
+        client: 'sqlite3', // or 'better-sqlite3'
+        connection: {
+            filename: "./database/todo.db"
+        },
+        useNullAsDefault: true
+    });
+
+    knexUpdate('todo').where('id', pId).update({ complete:(pComplete != undefined) ? pComplete ? 0 : 1 : knex('todo').where('id', pId).select('complete') , date: (pDue != undefined) ? pDue : knex('todo').where('id', pId).select('date'), task: (pTask != undefined) ? pTask : knex('todo').where('id', pId).select('task')  }).then((rows) => {
         console.log('Todo updated');
     }).catch((err) => {
-        console.log(err);
+        console.log("Error UPDATE: " +err);
     }).finally(() => {
-        knex.destroy();
+        knexUpdate.destroy();
     });
 };   
 
@@ -64,17 +80,25 @@ function update(pId, pComplete, pDue, pTask) {
  * @param {number} pId   Id du todo
  */
 const deleteTodo = (pId) => {
-    knex('todo').where('id', pId).del().then((rows) => {
+    const knexDelete = require('knex')({
+        client: 'sqlite3', // or 'better-sqlite3'
+        connection: {
+            filename: "./database/todo.db"
+        },
+        useNullAsDefault: true
+    });
+
+    knexDelete('todo').where('id', pId).del().then((rows) => {
         console.log('Todo deleted');
     }).catch((err) => {
         console.log(err);
     }).finally(() => {
-        knex.destroy();
+        knexDelete.destroy();
     });
 };
 
 const list = () => {
-    knex.select('*').from('todo').then((rows) => {
+  knex.select('*').from('todo').then((rows) => {
         for(let i = 0; i < rows.length; i++){
             
             if(rows[i].complete === 1){
@@ -90,7 +114,7 @@ const list = () => {
 
         console.table(rows);
     }).catch((err) => {
-        console.log(err);
+        console.log("Error CREATE: " +err);
     }).finally(() => {
         knex.destroy();
     });
@@ -101,17 +125,16 @@ const initDatabase = () => {
         table.increments('id').primary();
         table.string('task', 255).notNullable();
         table.boolean('complete').notNullable().defaultTo(false);
-        table.date('date').nullable();
+        table.string('date', 255).nullable();
       })
       .then(function() {
         console.log('Table created');
       })
       .catch(function(err) {
         console.log(err);
-      })
-      .finally(function() {
+      }).finally(() => {
         knex.destroy();
-      });
+    });
 };
 
 const deleteDatabase = () => {
@@ -125,11 +148,58 @@ const deleteDatabase = () => {
 };
 
 const getAllTodo = async () => {
-    const rows = await knex.select('*').from('todo');
-    return rows;
+    const knexAll = require('knex')({
+        client: 'sqlite3', // or 'better-sqlite3'
+        connection: {
+            filename: "./database/todo.db"
+        },
+        useNullAsDefault: true
+    });
+
+
+    return knexAll.select('*').from('todo').then((rows) => {
+        for(let i = 0; i < rows.length; i++){
+            
+            if(rows[i].complete === 1){
+                rows[i].complete = true;
+            }else{
+                rows[i].complete = false;
+            }
+
+            if(rows[i].date === null){
+                rows[i].date = "Pas de date";
+            }
+        }
+        return rows;
+    }).catch((err) => {
+        console.log("Error LISTALL: " + err + " " );
+    }).finally(() => {
+        knexAll.destroy();
+    });
+};
+
+const getTodo = (id) => {
+    const knexID = require('knex')({
+        client: 'sqlite3', // or 'better-sqlite3'
+        connection: {
+            filename: "./database/todo.db"
+        },
+        useNullAsDefault: true
+    });
+
+    return knexID.select('*').from('todo').where('id', id).then((rows) => {
+        for(let i = 0; i < rows.length; i++){
+        }
+        return rows;
+    }).catch((err) => {
+        console.log("Error LISTALL: " + err + " " );
+    }).finally(() => {
+        knex.destroy();
+    });
 };
 
 
+exports.getTodo = getTodo;
 exports.getAllTodo = getAllTodo;
 exports.createTodo = createTodo;
 exports.update = update;

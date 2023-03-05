@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/css/index.css" rel="stylesheet" type="text/css">
-    <title>TODO App</title>
+    <link href="/css/create.css" rel="stylesheet" type="text/css">
+    <title>Todo App</title>
 </head>
 <body>
     <header class="header">
@@ -21,8 +21,20 @@
             </nav>
         </div>
     </header>
-    <main class="main">
-        <h1>Bienvenue sur l'App Todo</h1>
+    <main>
+        <form name='createTodo' method="POST" class="form" action="/create">
+            <label for="task">Tâche à réalisé:</label>
+            <input type="text" id="task" name="task" required>
+          
+            <label for="complete">Complété ? :</label>
+            <input type="checkbox" id="complete" name="complete">
+          
+            <label for="due">Date de rendu:</label>
+            <input type="date" id="due" name="due">
+          
+            <button type="submit">Ajouter</button>
+          </form>
     </main>
+    
 </body>
 </html>

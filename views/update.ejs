@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/css/index.css" rel="stylesheet" type="text/css">
+    <link href="/css/update.css" rel="stylesheet" type="text/css">
     <title>TODO App</title>
 </head>
 <body>
@@ -17,12 +17,19 @@
                     <a class="link" href="/create">Créé Todo</a>
                     <a class="link" href="/delete">Supprimer Todo</a>
                     <a class="link" href="/update">Mise à jour Todo</a>
-                </div>
+                </div>  
             </nav>
         </div>
     </header>
     <main class="main">
-        <h1>Bienvenue sur l'App Todo</h1>
+        <form method="POST" action="/update">
+            <select name="task">
+              <% tasks.forEach(function(task) { %>
+                <option value="<%= task.id %>"><%= task.id %> : <%= task.task %></option>
+              <% }); %>
+            </select>
+            <button type="submit">Submit</button>
+          </form>
     </main>
 </body>
 </html>
