@@ -23,6 +23,7 @@
     </header>
     <main>
         <form name='createTodo' method="POST" class="form" action="/create">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
             <label for="task">Tâche à réalisé:</label>
             <input type="text" id="task" name="task" required>
           
@@ -34,7 +35,6 @@
           
             <button type="submit">Ajouter</button>
           </form>
-    </main>
-    
+        </main>
 </body>
 </html>

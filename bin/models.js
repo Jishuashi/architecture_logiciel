@@ -1,6 +1,9 @@
 const { boolean, option } = require("yargs");
 const Todo = require("./class/todo");
 const fs = require("fs");
+const dotenv = require("dotenv");
+
+dotenv.config('./env/dev.env');
 
 const knex = require('knex')({
     client: 'sqlite3', // or 'better-sqlite3'
@@ -10,6 +13,11 @@ const knex = require('knex')({
     useNullAsDefault: true
 });
 
+
+process.on('exit', code => { console.log(`Le process s'est arrêté avec le code: ${code}`) });
+process.on('uncaughtException', ((err, origin) => { console.log(`UNCAUGTH_EXEPTION ${err}, Origin : ${origin}`) }));
+process.on('unhandledRejection', ((reason, promise) => { console.log(`UNHANDLED_REJECTION: ${reason} \n ------ \n ${promise}`) }));
+process.on('warning', ((...args) => { console.log(...args) }));
 
 /**
  * Creé un todo et l'ajoute à la base de donnée

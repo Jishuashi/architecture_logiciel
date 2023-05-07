@@ -63,9 +63,27 @@
 }
 
 .form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
     color: black;
     margin-top: 20px;
     width: 100%;
     height: 100%;
+}
+
+.form input{
+    display: block;
+    margin-left: 20px;
+}
+
+.form label{
+    display: block;
+    margin-left: 20px;
+}
+
+.form button{
+    display: block;
+    margin-left: 20px;
 }

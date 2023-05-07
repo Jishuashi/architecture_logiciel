@@ -11,17 +11,48 @@ const { usage } = require("yargs");
 const express = require('express');
 const ejs = require('ejs');
 const app = express();
-const bodyParser = require('body-parser')
+const csrf = require('csurf');
+const bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+const session = require('express-session');
 const port = 3000;
 
+const forms = require('forms');
+var fields = forms.fields;
+const widgets = forms.widgets;
+var validators = forms.validators;
+
 app.set("view engine", "ejs");
+
 
 app.get('/', (req, res) => {
     res.render("index");
 })
 
-app.use(express.static('public'));
 
+const csrfProtection = csrf({
+    cookie: {
+        key: '_csrf',
+        path: '/',
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: true
+    }
+});
+
+// ...
+
+app.use(express.static('public'));
+app.use(cookieParser());
+app.use(session({
+  secret: 'todo',
+  resave: false,
+  saveUninitialized: true
+}));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(csrfProtection);
+
+const urlencodedparser = bodyParser.urlencoded({ extended: false });
 
 const usageSTR = "\nUsage: todo <command> <options>";
 
@@ -66,18 +97,17 @@ function webView() {
     });
 
     app.get('/create', (req, res) => {
-        res.render('create');
+        res.render('create', { csrfToken: req.csrfToken() });
     });
 
-    var urlencodedparser = bodyParser.urlencoded({ extended: false });
-    app.post('/create', urlencodedparser, (req, res) => {
+
+
+    app.post('/create', csrfProtection, urlencodedparser, (req, res) => {
         var lComplete = false;
 
         if (req.body.complete == "on") {
             lComplete = true;
         }
-
-        console.log(req.body.due);
 
         models.createTodo(req.body.task, lComplete, req.body.due);
         res.redirect('/list');
@@ -86,43 +116,43 @@ function webView() {
 
     app.get('/delete', (req, res) => {
         models.getAllTodo().then(rows => {
-            res.render('delete', { tasks: rows });
+            res.render('delete', { tasks: rows, csrfToken: req.csrfToken()});
         });
     });
 
-    app.post('/delete', urlencodedparser, (req, res) => {
+    app.post('/delete', csrfProtection, urlencodedparser, (req, res) => {
         models.deleteTodo(req.body.task);
         res.redirect('/list');
     });
 
     app.get('/update', (req, res) => {
         models.getAllTodo().then(rows => {
-            res.render('update', { tasks: rows });
+            res.render('update', { tasks: rows, csrfToken: req.csrfToken()});
         });
     });
 
-    app.post('/update', urlencodedparser, (req, res) => {
+    app.post('/update', csrfProtection, urlencodedparser, (req, res) => {
         var id = req.body.task;
         res.redirect(`/update/form?id=${id}`);
     });
-    
-    
+
+
     app.get('/update/form', (req, res) => {
-            models.getTodo(req.query.id).then(rows => {
-                res.render('form', { todo: rows });
+        models.getTodo(req.query.id).then(rows => {
+            res.render('form', { todo: rows, csrfToken: req.csrfToken()});
         });
-});
-    
-    app.post('/update/form', urlencodedparser, (req, res) => {
-            req.body.complete = req.body.complete == "on" ? true : false;
+    });
 
-            if(req.body.due == ""){
-                req.body.due = undefined;
-            }
+    app.post('/update/form', csrfProtection, urlencodedparser, (req, res) => {
+        req.body.complete = req.body.complete == "on" ? true : false;
 
-            models.update(req.body.id, req.body.complete, req.body.due, req.body.task);
+        if (req.body.due == "") {
+            req.body.due = undefined;
+        }
 
-            res.redirect('/list');
+        models.update(req.body.id, req.body.complete, req.body.due, req.body.task);
+
+        res.redirect('/list');
     });
 
 };

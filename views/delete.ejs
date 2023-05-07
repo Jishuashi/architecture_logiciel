@@ -23,6 +23,7 @@
     </header>
     <main class="main">
         <form method="POST" action="/delete" class="form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
             <select name="task">
               <% tasks.forEach(function(task) { %>
                 <option value="<%= task.id %>"><%= task.task %></option>

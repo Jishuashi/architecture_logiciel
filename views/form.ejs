@@ -23,6 +23,7 @@
     </header>
     <main class="main">
         <form method="POST" action="form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 
             <label for="task">ID:</label>
             <input type="text" id="id" name="id" value="<%= todo[0].id %>" readonly="readonly">
