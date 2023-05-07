@@ -3,12 +3,12 @@ const Todo = require("./class/todo");
 const fs = require("fs");
 const dotenv = require("dotenv");
 
-dotenv.config('./env/dev.env');
+dotenv.config({path: './env/dev.env'});
 
 const knex = require('knex')({
     client: 'sqlite3', // or 'better-sqlite3'
     connection: {
-        filename: "./database/todo.db"
+        filename: process.env.TODO_DATABASE
     },
     useNullAsDefault: true
 });
@@ -29,7 +29,7 @@ const createTodo = (pTask, pComplete, pDue) => {
     const knexCreate = require('knex')({
         client: 'sqlite3', // or 'better-sqlite3'
         connection: {
-            filename: "./database/todo.db"
+            filename: process.env.TODO_DATABASE
         },
         useNullAsDefault: true
     });

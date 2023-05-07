@@ -15,7 +15,10 @@ const csrf = require('csurf');
 const bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 const session = require('express-session');
+const dotenv = require("dotenv");
 const port = 3000;
+
+dotenv.config({path: './env/dev.env'});
 
 const forms = require('forms');
 var fields = forms.fields;
@@ -45,7 +48,7 @@ const csrfProtection = csrf({
 app.use(express.static('public'));
 app.use(cookieParser());
 app.use(session({
-  secret: 'todo',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true
 }));
