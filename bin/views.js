@@ -16,12 +16,13 @@ const bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 const session = require('express-session');
 const fs = require('fs');
+const expressBasicAuth = require("express-basic-auth");
 const path = require('path');
 const dotenv = require("dotenv");
 const morgan = require('morgan');
 const port = 3000;
 
-dotenv.config({path: './env/dev.env'});
+dotenv.config({ path: './env/dev.env' });
 
 const forms = require('forms');
 var fields = forms.fields;
@@ -30,6 +31,15 @@ var validators = forms.validators;
 
 app.set("view engine", "ejs");
 
+const authOptionsAdmin = {
+    users: { 'admin': 'admin' }, 
+    challenge: true, 
+};
+
+const authOptions = {
+    users: { 'boogie': 'boogie' }, 
+    challenge: true, 
+};
 
 app.get('/', (req, res) => {
     res.render("index");
@@ -46,14 +56,12 @@ const csrfProtection = csrf({
     }
 });
 
-// ...
-
 app.use(express.static('public'));
 app.use(cookieParser());
 app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true
+    secret: process.env.TODO_SECRET_KEY,
+    resave: false,
+    saveUninitialized: false
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(csrfProtection);
@@ -66,13 +74,6 @@ const logStream = fs.createWriteStream(logFilePath, { flags: 'a' });
 
 app.use(morgan(':date[iso] [:method :url] :status - :response-time ms', { stream: logStream }));
 app.set('logLevel', 'info');
-
-// Gestionnaire d'erreurs pour les erreurs internes
-app.use((err, req, res, next) => {
-    console.error(err);
-    res.flash('Erreur interne du serveur', 'error');
-    res.redirect('/');
-});
 
 
 const urlencodedparser = bodyParser.urlencoded({ extended: false });
@@ -113,19 +114,25 @@ const commands = yargs.command("create", "Ajoute une todo", (y) => {
 
 //express views
 function webView() {
-    app.get('/list', (req, res) => {
+    // Route publique accessible sans authentification
+    app.get('/', (req, res) => {
+        res.send('Route publique');
+    });
+
+
+    app.get('/list', expressBasicAuth(authOptions), (req, res) => {
         models.getAllTodo().then(rows => {
             res.render('list', { tasks: rows });
         });
     });
 
-    app.get('/create', (req, res) => {
+    app.get('/create', expressBasicAuth(authOptionsAdmin), (req, res) => {
         res.render('create', { csrfToken: req.csrfToken() });
     });
 
 
 
-    app.post('/create', csrfProtection, urlencodedparser, (req, res) => {
+    app.post('/create', csrfProtection, expressBasicAuth(authOptionsAdmin), urlencodedparser, (req, res) => {
         var lComplete = false;
 
         if (req.body.complete == "on") {
@@ -137,36 +144,36 @@ function webView() {
     });
 
 
-    app.get('/delete', (req, res) => {
+    app.get('/delete', expressBasicAuth(authOptionsAdmin), (req, res) => {
         models.getAllTodo().then(rows => {
-            res.render('delete', { tasks: rows, csrfToken: req.csrfToken()});
+            res.render('delete', { tasks: rows, csrfToken: req.csrfToken() });
         });
     });
 
-    app.post('/delete', csrfProtection, urlencodedparser, (req, res) => {
+    app.post('/delete', expressBasicAuth(authOptionsAdmin), csrfProtection, urlencodedparser, (req, res) => {
         models.deleteTodo(req.body.task);
         res.redirect('/list');
     });
 
-    app.get('/update', (req, res) => {
+    app.get('/update', expressBasicAuth(authOptionsAdmin), (req, res) => {
         models.getAllTodo().then(rows => {
-            res.render('update', { tasks: rows, csrfToken: req.csrfToken()});
+            res.render('update', { tasks: rows, csrfToken: req.csrfToken() });
         });
     });
 
-    app.post('/update', csrfProtection, urlencodedparser, (req, res) => {
+    app.post('/update', expressBasicAuth(authOptionsAdmin), expressBasicAuth(authOptions), csrfProtection, urlencodedparser, (req, res) => {
         var id = req.body.task;
         res.redirect(`/update/form?id=${id}`);
     });
 
 
-    app.get('/update/form', (req, res) => {
+    app.get('/update/form', expressBasicAuth(authOptions), (req, res) => {
         models.getTodo(req.query.id).then(rows => {
-            res.render('form', { todo: rows, csrfToken: req.csrfToken()});
+            res.render('form', { todo: rows, csrfToken: req.csrfToken() });
         });
     });
 
-    app.post('/update/form', csrfProtection, urlencodedparser, (req, res) => {
+    app.post('/update/form', expressBasicAuth(authOptions), csrfProtection, urlencodedparser, (req, res) => {
         req.body.complete = req.body.complete == "on" ? true : false;
 
         if (req.body.due == "") {
