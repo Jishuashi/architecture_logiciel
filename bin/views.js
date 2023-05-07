@@ -15,7 +15,10 @@ const csrf = require('csurf');
 const bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 const session = require('express-session');
+const fs = require('fs');
+const path = require('path');
 const dotenv = require("dotenv");
+const morgan = require('morgan');
 const port = 3000;
 
 dotenv.config({path: './env/dev.env'});
@@ -54,6 +57,23 @@ app.use(session({
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(csrfProtection);
+
+const logDirectory = path.join(__dirname, 'logs');
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
+const logFilePath = path.join(logDirectory, 'todo.log');
+
+const logStream = fs.createWriteStream(logFilePath, { flags: 'a' });
+
+app.use(morgan(':date[iso] [:method :url] :status - :response-time ms', { stream: logStream }));
+app.set('logLevel', 'info');
+
+// Gestionnaire d'erreurs pour les erreurs internes
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.flash('Erreur interne du serveur', 'error');
+    res.redirect('/');
+});
+
 
 const urlencodedparser = bodyParser.urlencoded({ extended: false });
 
