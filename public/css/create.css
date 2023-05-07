@@ -64,13 +64,10 @@
 
 .form {
     display: flex;
-    width: 250px;
-    height: 150px;
     margin: 0 auto;
     position: relative;
     color: black;
     margin-top: 20px;
     width: 100%;
-    background-color: #232323;
     height: 100%;
 }
