@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +8,7 @@
     <link href="/css/update.css" rel="stylesheet" type="text/css">
     <title>TODO App</title>
 </head>
+
 <body>
     <header class="header">
         <div class="divNav">
@@ -17,29 +19,29 @@
                     <a class="link" href="/create">Créé Todo</a>
                     <a class="link" href="/delete">Supprimer Todo</a>
                     <a class="link" href="/update">Mise à jour Todo</a>
-                </div>  
+                </div>
             </nav>
         </div>
     </header>
     <main class="main">
-        <form method="POST" action="form">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <form method="POST" action="form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 
-            <label for="task">ID:</label>
-            <input type="text" id="id" name="id" value="<%= todo[0].id %>" readonly="readonly">
+                <label for="task">ID:</label>
+                <input type="text" id="id" name="id" value="<%= todo[0].id %>" readonly="readonly">
 
-            <label for="task">Task:</label>
-            <input type="text" id="task" name="task" value="<%= todo[0].task %>" required>
-          
-            <label for="complete">Complete:</label>
-            <input type="checkbox" id="complete" name="complete" <% if (todo[0].complete) { %>checked<% } %>>
-          
-            <label for="due">Due:</label>
-            <input type="text" id="due" name="due" value="<%= todo[0].date %>">
-          
-            <button type="submit">Mettre à jour</button>
-          </form>
-          
+                <label for="task">Task:</label>
+                <input type="text" id="task" name="task" value="<%= todo[0].task %>" required>
+
+                <label for="complete">Complete:</label>
+                <input type="checkbox" id="complete" name="complete" <% if (todo[0].complete) { %>checked<% } %>>
+
+                    <label for="due">Due:</label>
+                    <input type="text" id="due" name="due" value="<%= todo[0].date %>">
+
+                    <button type="submit">Mettre à jour</button>
+            </form>
     </main>
 </body>
+
 </html>

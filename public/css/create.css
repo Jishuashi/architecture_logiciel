@@ -58,32 +58,19 @@
 .main {
     position: relative;
     top: 20%;
-    width: 100%;
+    width: 250%;
     height: 100%;
 }
 
 .form {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 250px;
+    height: 150px;
+    margin: 0 auto;
     position: relative;
     color: black;
     margin-top: 20px;
     width: 100%;
+    background-color: #232323;
     height: 100%;
-}
-
-.form input{
-    display: block;
-    margin-left: 20px;
-}
-
-.form label{
-    display: block;
-    margin-left: 20px;
-}
-
-.form button{
-    display: block;
-    margin-left: 20px;
 }

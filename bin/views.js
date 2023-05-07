@@ -37,7 +37,9 @@ const authOptionsAdmin = {
 };
 
 const authOptions = {
-    users: { 'boogie': 'boogie' }, 
+    users: { 'boogie': 'boogie',
+             'admin': 'admin'   
+            }, 
     challenge: true, 
 };
 
